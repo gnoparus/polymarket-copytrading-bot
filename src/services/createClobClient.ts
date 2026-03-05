@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
-import { ClobClient } from '@polymarket/clob-client';
-import { SignatureType } from '@polymarket/order-utils';
+import { ClobClient, SignatureType } from '@polymarket/clob-client';
 import { ENV } from '../config/env';
+import { makeEthersSigner } from '../utils/ethersSignerAdapter';
 
 const PROXY_WALLET = ENV.PROXY_WALLET;
 const PRIVATE_KEY = ENV.PRIVATE_KEY;
@@ -10,14 +10,16 @@ const CLOB_HTTP_URL = ENV.CLOB_HTTP_URL;
 const createClobClient = async (): Promise<ClobClient> => {
     const chainId = 137;
     const host = CLOB_HTTP_URL as string;
-    const wallet = new ethers.Wallet(PRIVATE_KEY as string);
+    const rawKey = PRIVATE_KEY.startsWith('0x') ? PRIVATE_KEY : `0x${PRIVATE_KEY}`;
+    const wallet = new ethers.Wallet(rawKey);
+    const signer = makeEthersSigner(wallet);
     let clobClient = new ClobClient(
         host,
         chainId,
-        wallet,
+        signer,
         undefined,
         SignatureType.POLY_PROXY,
-        PROXY_WALLET as string
+        PROXY_WALLET as string,
     );
 
     const originalConsoleError = console.error;
@@ -25,22 +27,20 @@ const createClobClient = async (): Promise<ClobClient> => {
     let creds = await clobClient.createApiKey();
     console.error = originalConsoleError;
     if (creds.key) {
-        console.log('API Key created', creds);
+        console.log('API Key created successfully');
     } else {
         creds = await clobClient.deriveApiKey();
-        console.log('API Key derived', creds);
+        console.log('API Key derived successfully');
     }
-    console.log('creds', creds);
 
     clobClient = new ClobClient(
         host,
         chainId,
-        wallet,
+        signer,
         creds,
         SignatureType.POLY_PROXY,
-        PROXY_WALLET as string
+        PROXY_WALLET as string,
     );
-    console.log(clobClient);
     return clobClient;
 };
 

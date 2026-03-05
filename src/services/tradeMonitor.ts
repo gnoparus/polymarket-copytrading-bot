@@ -9,7 +9,6 @@ const FETCH_INTERVAL = ENV.FETCH_INTERVAL;
 
 if (!USER_ADDRESS) {
     throw new Error('USER_ADDRESS is not defined');
-    console.log('USER_ADDRESS is not defined');
 }
 
 const UserActivity = getUserActivityModel(USER_ADDRESS);
