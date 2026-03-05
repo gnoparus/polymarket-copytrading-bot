@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { validateEthereumAddress } from '../utils/validateAddress';
 
 const positionSchema = new Schema({
     _id: {
@@ -67,11 +68,13 @@ const activitySchema = new Schema({
 });
 
 const getUserPositionModel = (walletAddress: string) => {
+    validateEthereumAddress(walletAddress);
     const collectionName = `user_positions_${walletAddress}`;
     return mongoose.model(collectionName, positionSchema, collectionName);
 };
 
 const getUserActivityModel = (walletAddress: string) => {
+    validateEthereumAddress(walletAddress);
     const collectionName = `user_activities_${walletAddress}`;
     return mongoose.model(collectionName, activitySchema, collectionName);
 };

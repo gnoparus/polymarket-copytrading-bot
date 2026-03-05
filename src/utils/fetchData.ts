@@ -1,9 +1,27 @@
 import axios from 'axios';
 
+const ALLOWED_HOSTS = ['data-api.polymarket.com'];
+
+const validateUrl = (url: string): void => {
+    let parsed: URL;
+    try {
+        parsed = new URL(url);
+    } catch {
+        throw new Error(`Invalid URL: ${url}`);
+    }
+    if (parsed.protocol !== 'https:') {
+        throw new Error(`URL must use HTTPS: ${url}`);
+    }
+    if (!ALLOWED_HOSTS.includes(parsed.hostname)) {
+        throw new Error(`URL hostname not allowed: ${parsed.hostname}`);
+    }
+};
+
 const fetchData = async (url: string, retries = 3, delay = 2000) => {
+    validateUrl(url);
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-            console.log(`Fetching data from: ${url} (attempt ${attempt}/${retries})`);
+            console.log(`Fetching data (attempt ${attempt}/${retries})`);
             
             const response = await axios.get(url, {
                 timeout: 10000, // 10 second timeout

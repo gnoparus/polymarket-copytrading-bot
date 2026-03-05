@@ -4,14 +4,14 @@ import { SignatureType } from '@polymarket/order-utils';
 import { ENV } from '../config/env';
 
 const PROXY_WALLET = ENV.PROXY_WALLET;
-const walletAddress = ENV.PRIVATE_KEY;
+const privateKey = ENV.PRIVATE_KEY;
 const CLOB_HTTP_URL = ENV.CLOB_HTTP_URL;
 
 const createClobClient = async (): Promise<ClobClient> => {
     const chainId = 137;
     const host = CLOB_HTTP_URL as string;
     
-    const targetwallet = walletAddress.startsWith('0x') ? walletAddress.slice(2) : walletAddress;
+    const targetwallet = privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey;
     
     let wallet: ethers.Wallet;
     try {
