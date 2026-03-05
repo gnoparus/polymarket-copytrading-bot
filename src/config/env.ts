@@ -30,7 +30,6 @@ const validatePrivateKey = (privateKey: string): void => {
         throw new Error(
             `PRIVATE_KEY contains invalid hexadecimal characters. ` +
             `Private key must only contain characters 0-9 and a-f (or A-F). ` +
-            `Found invalid characters in: ${privateKey.substring(0, 20)}... ` +
             `Please check your .env file and ensure PRIVATE_KEY is a valid 64-character hexadecimal string (no 0x prefix).`
         );
     }
